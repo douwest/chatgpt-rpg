@@ -6,7 +6,7 @@ import {ChatCompletionRequestMessageRoleEnum} from "openai";
 
 export const environment = {
   production: false,
-  OPENAI_API_KEY: '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',
+  OPENAI_API_KEY: 'your-api-key',
   OPENAI_ROLE: ChatCompletionRequestMessageRoleEnum.User
 };
 
