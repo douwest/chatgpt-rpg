@@ -1,0 +1,35 @@
+.page {
+  font-family: 'Fira Code Light', sans-serif;
+  font-size: 20px;
+  margin: 25px;
+  text-overflow: ellipsis;
+}
+
+.response-container {
+  color: white;
+  width: 90vw;
+  height: 100%;
+}
+
+.instruction-container {
+  margin-top: auto;
+  color: white;
+  position: fixed;
+  left: 25px;
+  bottom: 25px;
+  width: 100%;
+}
+
+
+.form > * {
+  background-color: #222020;
+  border: none;
+}
+
+.user {
+  color: forestgreen;
+}
+
+.location {
+  color: dodgerblue;
+}
