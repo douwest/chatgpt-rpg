@@ -1,7 +1,8 @@
 import {Component} from '@angular/core';
-import {StorytellerServiceTsService} from "./storyteller/storyteller.service.ts.service";
+import {StorytellerService} from "./storyteller/storyteller.service";
 import {FormControl, UntypedFormGroup, Validators} from "@angular/forms";
 import {Observable, tap} from "rxjs";
+import {Message} from "./domain/message.model";
 
 @Component({
   selector: 'app-root',
@@ -10,17 +11,17 @@ import {Observable, tap} from "rxjs";
 })
 export class AppComponent {
 
-  title = 'angular-rpg';
+  public readonly user: string = 'user@user22';
+  public readonly location: string = 'location';
 
-  readonly user: string = 'user@user22';
-  readonly location: string = 'location'
-  public readonly response$ = this.storytellerService.response$;
+  public readonly response$: Observable<Message[]> = this.storytellerService.response$;
   public readonly pending$: Observable<boolean> = this.storytellerService.pending$;
-  public readonly form = new UntypedFormGroup({
+
+  public readonly form: UntypedFormGroup = new UntypedFormGroup({
     message: new FormControl<string | null>('', [Validators.required])
   })
 
-  constructor(private storytellerService: StorytellerServiceTsService) {
+  constructor(private storytellerService: StorytellerService) {
     this.pending$.pipe(
       tap(pending => {
         if (pending) {
@@ -35,7 +36,7 @@ export class AppComponent {
   onSubmit() {
     const message = this.form.get('message');
     if (message?.valid) {
-      this.storytellerService.generate([message.value!]);
+      this.storytellerService.respond(message.value);
       message.setValue('');
     }
   }

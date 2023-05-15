@@ -1,6 +1,6 @@
 <div class="page d-flex flex-column-reverse">
   <div class="response-container">
-    <div *ngFor="let response of (response$ | async)">{{ response }}</div>
+    <div *ngFor="let response of (response$ | async)">{{ response.content }}</div>
   </div>
   <footer class="instruction-container">
     <form class="form" [formGroup]="form" (ngSubmit)="onSubmit()" >
