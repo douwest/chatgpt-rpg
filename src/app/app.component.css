@@ -1,5 +1,5 @@
 .page {
-  font-family: 'Fira Code Light', sans-serif;
+  font-family: 'Fira Mono', monospace;
   font-size: 20px;
   margin: 25px;
   text-overflow: ellipsis;
@@ -20,9 +20,18 @@
   width: 100%;
 }
 
+.message {
+  margin-bottom: 1em;
+}
 
 .form > * {
   background-color: #222020;
+}
+
+.instruction-form {
+  font-family: 'Fira Mono', monospace;
+  font-size: 20px;
+  color: white;
   border: none;
 }
 
@@ -32,4 +41,8 @@
 
 .location {
   color: dodgerblue;
+}
+
+textarea:focus, input:focus{
+  outline: none;
 }

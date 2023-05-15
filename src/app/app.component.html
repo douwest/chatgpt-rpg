@@ -1,12 +1,17 @@
 <div class="page d-flex flex-column-reverse">
   <div class="response-container">
-    <div *ngFor="let response of (response$ | async)">{{ response.content }}</div>
+    <div *ngFor="let message of (conversation$ | async)" class="message">
+      <div *ngIf="message.role !== Role.System">
+        <span class="user">{{ getName(message.role) }}: </span>
+        <span class="content" [innerHTML]="message.content"></span>
+      </div>
+    </div>
   </div>
   <footer class="instruction-container">
     <form class="form" [formGroup]="form" (ngSubmit)="onSubmit()" >
-      <span class="user">{{ user }}</span>:
-      <span class="location">{{ '/' + location}}</span>$
-      <input class="message" type="text" formControlName="message">
+      <span class="user">{{ user }}</span><span>:</span>
+      <span class="location">{{ '/' + location}}</span><span>$</span>
+      <input class="instruction-form" type="text" formControlName="message">
     </form>
   </footer>
 </div>

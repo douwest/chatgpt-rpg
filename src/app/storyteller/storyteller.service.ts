@@ -1,9 +1,9 @@
 import {Injectable} from '@angular/core';
-import {OpenAIApi} from 'openai';
+import {ChatCompletionRequestMessageRoleEnum, OpenAIApi} from 'openai';
 import {environment} from "../../environments/environment";
 import {BehaviorSubject, Observable, Subject} from "rxjs";
-import {Message} from "../domain/message.model";
-import {TEXT_BASED_RPG} from "../config/game.config";
+import {ConversationRole, Message} from "../domain/message.model";
+import {GAME_CONFIG} from "../config/game.config";
 
 @Injectable({
   providedIn: 'root'
@@ -11,13 +11,13 @@ import {TEXT_BASED_RPG} from "../config/game.config";
 export class StorytellerService {
 
   private readonly openAIApi: OpenAIApi = new OpenAIApi(environment.apiConfiguration)
-  private readonly messages: Message[] = [TEXT_BASED_RPG.initialPrompt];
+  private readonly conversation: Message[] = [GAME_CONFIG.initialPrompt];
 
-  private readonly response$$: Subject<Message[]> = new Subject<Message[]>();
+  private readonly conversation$$: Subject<Message[]> = new Subject<Message[]>();
   private readonly pending$$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
 
   constructor() {
-    this.generateCompletion(this.messages);
+    this.generateCompletion(this.conversation);
   }
 
   /**
@@ -26,38 +26,37 @@ export class StorytellerService {
    * @param model - the completion model to use
    * @param temperature - the temperature or 'randomness'
    */
-  public generateCompletion(messages: Message[], model = 'gpt-3.5-turbo', temperature = 0.87): any {
+  public generateCompletion(messages: Message[], model = 'gpt-3.5-turbo', temperature = 0.75): any {
     this.pending$$.next(true);
     this.openAIApi.createChatCompletion({model, messages, temperature,})
-      .then(this.mapResponse)
-      .then(response => this.response$$.next(response))
+      .then(this.processResponse.bind(this))
       .catch(console.error)
       .finally(() => this.pending$$.next(false));
   }
 
   /**
-   * Respond to the prompt.
-   * @param message - the new message.
+   * Respond to the prompt, by adding the message to the conversation and asking for a completion on the conversation.
+   * @param content - the content of the new message.
    */
-  public respond(message: Message): void {
-    this.messages.push(message);
-    this.generateCompletion(this.messages);
+  public respond(content: string): void {
+    this.conversation.push(new Message(content, ChatCompletionRequestMessageRoleEnum.User));
+    this.generateCompletion(this.conversation);
   }
 
   /**
-   * Maps the response from the OpenAIApi to an array of Message objects.
+   * Processes the response from the OpenAIApi and appends them in sorted order to the messages array.
    * @param response - the OpenAIApi response
    */
-  private mapResponse(response: any): Message[] {
-    const result: Message[] = [];
+  private processResponse(response: any): any {
     response.data.choices
       .sort((a: any, b: any) => a.index < b.index)
-      .forEach((choice: any) => result.push(new Message(choice.message.content, choice.message.role)));
-    return result;
+      .forEach((choice: any) => this.conversation.push(new Message(choice.message.content, choice.message.role)));
+    this.conversation$$.next(this.conversation);
+    return null;
   }
 
-  get response$(): Observable<Message[]> {
-    return this.response$$.asObservable();
+  get conversation$(): Observable<Message[]> {
+    return this.conversation$$.asObservable();
   }
   get pending$(): Observable<boolean> {
     return this.pending$$.asObservable();
