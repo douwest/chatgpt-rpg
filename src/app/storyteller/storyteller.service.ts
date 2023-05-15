@@ -17,7 +17,7 @@ export class StorytellerService {
   private readonly pending$$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
 
   constructor() {
-    this.answer(this.messages);
+    this.generateCompletion(this.messages);
   }
 
   /**
@@ -26,7 +26,7 @@ export class StorytellerService {
    * @param model - the completion model to use
    * @param temperature - the temperature or 'randomness'
    */
-  public answer(messages: Message[], model = 'gpt-3.5-turbo', temperature = 0.87): any {
+  public generateCompletion(messages: Message[], model = 'gpt-3.5-turbo', temperature = 0.87): any {
     this.pending$$.next(true);
     this.openAIApi.createChatCompletion({model, messages, temperature,})
       .then(this.mapResponse)
@@ -35,9 +35,13 @@ export class StorytellerService {
       .finally(() => this.pending$$.next(false));
   }
 
+  /**
+   * Respond to the prompt.
+   * @param message - the new message.
+   */
   public respond(message: Message): void {
     this.messages.push(message);
-    this.answer(this.messages);
+    this.generateCompletion(this.messages);
   }
 
   /**
