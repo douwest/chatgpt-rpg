@@ -1,10 +1,11 @@
 import {AfterViewInit, Component, ElementRef, ViewChild} from '@angular/core';
 import {StorytellerService} from "./storyteller/storyteller.service";
 import {FormControl, UntypedFormGroup, Validators} from "@angular/forms";
-import {delay, last, Observable, tap} from "rxjs";
+import {delay, Observable, tap} from "rxjs";
 import {Message} from "./domain/message.model";
 import {ChatCompletionRequestMessageRoleEnum} from "openai";
-import {GAME_CONFIG} from "./config/game.config";
+import {TEXT_BASED_RPG_CONFIG_1} from "./config/game.config";
+import {environment} from "../environments/environment";
 
 @Component({
   selector: 'app-root',
@@ -25,6 +26,7 @@ export class AppComponent implements AfterViewInit {
     message: new FormControl<string | null>('', [Validators.required])
   })
   public readonly Role = ChatCompletionRequestMessageRoleEnum;
+  protected readonly environment = environment;
 
   constructor(private storytellerService: StorytellerService) {
     this.conversation$.pipe(
@@ -47,17 +49,17 @@ export class AppComponent implements AfterViewInit {
   }
 
   public getName(role: ChatCompletionRequestMessageRoleEnum): string | undefined {
-    if (!GAME_CONFIG.roles.has(role)) {
+    if (!TEXT_BASED_RPG_CONFIG_1.roles.has(role)) {
       throw new Error(`Could not find name for role ${role}!`)
     }
-    return GAME_CONFIG.roles.get(role);
+    return TEXT_BASED_RPG_CONFIG_1.roles.get(role);
   }
 
   private focus(): void {
     this.instruction?.nativeElement?.focus();
   }
 
-  scrollToBottom(): void {
+  private scrollToBottom(): void {
     this.chat.nativeElement.scrollTop = this.chat.nativeElement.scrollHeight;
   }
 }

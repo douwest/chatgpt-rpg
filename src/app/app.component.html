@@ -1,10 +1,11 @@
 <div class="page">
   <div #chat class="response-container">
     <div *ngFor="let message of (conversation$ | async)">
-      <div *ngIf="message.role !== Role.System" class="message">
+      <div class="message">
         <span [ngSwitch]="message.role" class="role">
           <span *ngSwitchCase="Role.Assistant" class="assistant" >{{ getName(message.role) }}</span>
           <span *ngSwitchCase="Role.User" class="player" >{{ getName(message.role) }}</span>:
+          <span *ngSwitchCase="Role.System && environment.debugMode" class="system" >{{ getName(message.role) }}</span>:
         </span>
         <span class="content" [innerHTML]="message.content"></span>
       </div>

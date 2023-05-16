@@ -3,7 +3,7 @@ import {ChatCompletionRequestMessageRoleEnum, OpenAIApi} from 'openai';
 import {environment} from "../../environments/environment";
 import {BehaviorSubject, Observable, Subject} from "rxjs";
 import {Message} from "../domain/message.model";
-import {GAME_CONFIG} from "../config/game.config";
+import {TEXT_BASED_RPG_CONFIG_1} from "../config/game.config";
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +11,7 @@ import {GAME_CONFIG} from "../config/game.config";
 export class StorytellerService {
 
   private readonly openAIApi: OpenAIApi = new OpenAIApi(environment.apiConfiguration)
-  private readonly conversation: Message[] = [GAME_CONFIG.initialPrompt];
+  private readonly conversation: Message[] = [TEXT_BASED_RPG_CONFIG_1.initialPrompt];
 
   private readonly conversation$$: Subject<Message[]> = new Subject<Message[]>();
   private readonly pending$$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);

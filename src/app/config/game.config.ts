@@ -9,10 +9,9 @@ export type GameConfig = {
   roles: Map<ChatCompletionRequestMessageRoleEnum, string>;
 };
 
-
-export const GAME_CONFIG: GameConfig = {
-  title: 'Text-based RPG 2',
-  description: 'Go on an epic adventure in a profound text-based RPG...',
+export const TEXT_BASED_RPG_CONFIG_1: GameConfig = {
+  title: 'Text-based RPG Instruction I',
+  description: 'Go on an epic adventure in a ChatGPT-generated text-based RPG.',
   initialPrompt: new Message(
 `
 Please generate a text-based RPG, where you are the Dungeon Master.
