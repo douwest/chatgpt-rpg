@@ -5,6 +5,7 @@ import {delay, last, Observable, tap} from "rxjs";
 import {Message} from "./domain/message.model";
 import {ChatCompletionRequestMessageRoleEnum} from "openai";
 import {GAME_CONFIG} from "./config/game.config";
+import {MessageParsingUtils} from "./utils/message-parsing.utils";
 
 @Component({
   selector: 'app-root',
@@ -57,7 +58,7 @@ export class AppComponent implements AfterViewInit {
     this.instruction?.nativeElement?.focus();
   }
 
-  scrollToBottom(): void {
+  private scrollToBottom(): void {
     this.chat.nativeElement.scrollTop = this.chat.nativeElement.scrollHeight;
   }
 }

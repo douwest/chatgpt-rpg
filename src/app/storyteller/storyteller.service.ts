@@ -4,6 +4,7 @@ import {environment} from "../../environments/environment";
 import {BehaviorSubject, Observable, Subject} from "rxjs";
 import {Message} from "../domain/message.model";
 import {GAME_CONFIG} from "../config/game.config";
+import {MessageParsingUtils} from "../utils/message-parsing.utils";
 
 @Injectable({
   providedIn: 'root'
@@ -51,7 +52,11 @@ export class StorytellerService {
   private processResponse(response: any): any {
     response.data.choices
       .sort((a: any, b: any) => a.index < b.index)
-      .forEach((choice: any) => this.conversation.push(new Message(choice.message.content, choice.message.role)));
+      .forEach((choice: any) => {
+        let msg = new Message(choice.message.content, choice.message.role);
+        this.conversation.push(msg)
+        MessageParsingUtils.parseMessage(msg);
+      });
     this.conversation$$.next(this.conversation);
     return null;
   }
