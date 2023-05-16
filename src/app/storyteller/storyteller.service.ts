@@ -1,9 +1,9 @@
 import {Injectable} from '@angular/core';
 import {ChatCompletionRequestMessageRoleEnum, OpenAIApi} from 'openai';
 import {environment} from "../../environments/environment";
-import {BehaviorSubject, Observable, Subject} from "rxjs";
+import {BehaviorSubject, debounce, delay, interval, Observable, of, Subject, tap} from "rxjs";
 import {Message} from "../domain/message.model";
-import {TEXT_BASED_RPG_CONFIG_1} from "../config/game.config";
+import {HttpErrorResponse} from "@angular/common/http";
 
 @Injectable({
   providedIn: 'root'
@@ -11,13 +11,25 @@ import {TEXT_BASED_RPG_CONFIG_1} from "../config/game.config";
 export class StorytellerService {
 
   private readonly openAIApi: OpenAIApi = new OpenAIApi(environment.apiConfiguration)
-  private readonly conversation: Message[] = [TEXT_BASED_RPG_CONFIG_1.initialPrompt];
+  private openAIPrompt: Message[] = [];
+  private userPrompt: Message[] = [new Message(
+      `A new game has started.\n\n\ ${environment.gameConfiguration.title}: ${environment.gameConfiguration.description}`,
+      ChatCompletionRequestMessageRoleEnum.System
+  )];
 
-  private readonly conversation$$: Subject<Message[]> = new Subject<Message[]>();
-  private readonly pending$$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
+  private readonly conversation$$: BehaviorSubject<Message[]> = new BehaviorSubject<Message[]>(this.userPrompt);
+  private readonly pending$$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   constructor() {
-    this.generateCompletion(this.conversation);
+    this.newStory();
+  }
+
+  /**
+   * Starts a new story.
+   */
+  public newStory(): void {
+    this.openAIPrompt = [environment.gameConfiguration.initialPrompt];
+    this.generateCompletion(this.openAIPrompt);
   }
 
   /**
@@ -30,18 +42,22 @@ export class StorytellerService {
     this.pending$$.next(true);
     this.openAIApi.createChatCompletion({model, messages, temperature,})
       .then(this.processResponse.bind(this))
-      .catch(console.error)
+      .catch(this.handleError.bind(this))
       .finally(() => this.pending$$.next(false));
   }
 
   /**
    * Respond to the prompt, by adding the message to the conversation and asking for a completion on the conversation.
    * @param content - the content of the new message.
+   * The user responses need to be in both the user and openAI prompts.
+   * We only want to expose the userPrompt through conversation$$.
    */
   public respond(content: string): void {
-    this.conversation.push(new Message(content, ChatCompletionRequestMessageRoleEnum.User));
-    this.conversation$$.next(this.conversation);
-    this.generateCompletion(this.conversation);
+    const message = new Message(content, ChatCompletionRequestMessageRoleEnum.User);
+    this.openAIPrompt.push(message);
+    this.userPrompt.push(message);
+    this.conversation$$.next(this.userPrompt);
+    this.generateCompletion(this.openAIPrompt);
   }
 
   /**
@@ -51,8 +67,22 @@ export class StorytellerService {
   private processResponse(response: any): any {
     response.data.choices
       .sort((a: any, b: any) => a.index < b.index)
-      .forEach((choice: any) => this.conversation.push(new Message(choice.message.content, choice.message.role)));
-    this.conversation$$.next(this.conversation);
+      .forEach((choice: any) => {
+        const message = new Message(choice.message.content, choice.message.role);
+        this.openAIPrompt.push(message)
+        this.userPrompt.push(message)
+      });
+    this.conversation$$.next(this.userPrompt);
+    return null;
+  }
+
+  private handleError(error: any): any {
+    this.userPrompt.push(new Message(
+        `HTTP Error: ${error.message}.
+        \n\nYou could try and continue the story by re-entering your command after some time has passed.`,
+        ChatCompletionRequestMessageRoleEnum.System
+    ));
+    this.conversation$$.next(this.userPrompt);
     return null;
   }
 

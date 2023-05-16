@@ -4,7 +4,6 @@ import {FormControl, UntypedFormGroup, Validators} from "@angular/forms";
 import {delay, Observable, tap} from "rxjs";
 import {Message} from "./domain/message.model";
 import {ChatCompletionRequestMessageRoleEnum} from "openai";
-import {TEXT_BASED_RPG_CONFIG_1} from "./config/game.config";
 import {environment} from "../environments/environment";
 
 @Component({
@@ -16,7 +15,7 @@ export class AppComponent implements AfterViewInit {
   @ViewChild('instruction') instruction!: ElementRef;
   @ViewChild('chat') chat!: ElementRef;
 
-  public readonly user: string = 'user@user22';
+  public readonly user: string = 'unknown@0';
   public readonly location: string = 'location';
 
   public readonly conversation$: Observable<Message[]> = this.storytellerService.conversation$;
@@ -30,7 +29,7 @@ export class AppComponent implements AfterViewInit {
 
   constructor(private storytellerService: StorytellerService) {
     this.conversation$.pipe(
-      delay(150), // so that it can be rendered first before manipulating DOM elements.
+      delay(50), // so that it can be rendered first before manipulating DOM elements.
       tap(this.focus.bind(this)),
       tap(this.scrollToBottom.bind(this))
     ).subscribe();
@@ -42,17 +41,17 @@ export class AppComponent implements AfterViewInit {
 
   public onSubmit() {
     const message = this.form.get('message');
-    if (message?.valid) {
+    if (message?.valid) { // TODO add lastTalker or something to check how to handle response (sys vs. assistant)
       this.storytellerService.respond(message.value);
       message.setValue('');
     }
   }
 
   public getName(role: ChatCompletionRequestMessageRoleEnum): string | undefined {
-    if (!TEXT_BASED_RPG_CONFIG_1.roles.has(role)) {
+    if (!environment.gameConfiguration.roles.has(role)) {
       throw new Error(`Could not find name for role ${role}!`)
     }
-    return TEXT_BASED_RPG_CONFIG_1.roles.get(role);
+    return environment.gameConfiguration.roles.get(role);
   }
 
   private focus(): void {

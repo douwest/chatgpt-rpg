@@ -22,7 +22,7 @@
           color: forestgreen;
         }
         .system {
-          color: lightblue;
+          color: indianred;
         }
         .assistant {
           color: darkorange;
@@ -40,7 +40,7 @@
     color: white;
     background-color: #222020;
     //border: 1px solid green; // for debugging
-    width: 100%;
+    width: calc(100% - 0.5em); // to align with scrollbar
 
     .form {
       display: flex;
