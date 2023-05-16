@@ -1,10 +1,11 @@
 import {AfterViewInit, Component, ElementRef, ViewChild} from '@angular/core';
 import {StorytellerService} from "./storyteller/storyteller.service";
 import {FormControl, UntypedFormGroup, Validators} from "@angular/forms";
-import {delay, Observable, tap} from "rxjs";
+import {delay, map, Observable, of, tap, timer} from "rxjs";
 import {Message} from "./domain/message.model";
 import {ChatCompletionRequestMessageRoleEnum} from "openai";
 import {environment} from "../environments/environment";
+import { await$ } from './config/waiting-indicator.config';
 
 @Component({
   selector: 'app-root',
@@ -14,6 +15,9 @@ import {environment} from "../environments/environment";
 export class AppComponent implements AfterViewInit {
   @ViewChild('instruction') instruction!: ElementRef;
   @ViewChild('chat') chat!: ElementRef;
+
+  protected readonly environment = environment;
+  protected readonly await$ = await$;
 
   public readonly user: string = 'unknown@0';
   public readonly location: string = 'location';
@@ -25,11 +29,10 @@ export class AppComponent implements AfterViewInit {
     message: new FormControl<string | null>('', [Validators.required])
   })
   public readonly Role = ChatCompletionRequestMessageRoleEnum;
-  protected readonly environment = environment;
 
   constructor(private storytellerService: StorytellerService) {
     this.conversation$.pipe(
-      delay(50), // so that it can be rendered first before manipulating DOM elements.
+      delay(50), // so that it can be rendered first before manipulating DOM-elements.
       tap(this.focus.bind(this)),
       tap(this.scrollToBottom.bind(this))
     ).subscribe();
@@ -48,14 +51,11 @@ export class AppComponent implements AfterViewInit {
   }
 
   public getName(role: ChatCompletionRequestMessageRoleEnum): string | undefined {
-    if (!environment.gameConfiguration.roles.has(role)) {
-      throw new Error(`Could not find name for role ${role}!`)
-    }
-    return environment.gameConfiguration.roles.get(role);
+    return environment.gameConfiguration.roles.get(role) ?? '<unknown>';
   }
 
   private focus(): void {
-    this.instruction?.nativeElement?.focus();
+    this.instruction.nativeElement.focus();
   }
 
   private scrollToBottom(): void {

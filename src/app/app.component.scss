@@ -13,6 +13,14 @@
     //border: 1px solid red; // for debugging
     height: 100%;
 
+    .pending {
+      .assistant {
+        color: darkorange;
+      }
+
+      .dotted-lines {}
+    }
+
     .message {
       margin-bottom: 1em;
 

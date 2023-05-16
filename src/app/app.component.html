@@ -10,6 +10,11 @@
         <span class="content" [innerHTML]="message.content"></span>
       </div>
     </div>
+    <div *ngIf="(pending$ | async)" class="pending">
+      <span class="assistant">[{{ getName(Role.Assistant) }}]</span>
+      <span class="dotted-lines">: {{await$ | async}}</span>
+
+    </div>
   </div>
   <div class="form-container">
     <form class="form" [formGroup]="form" (ngSubmit)="onSubmit()" >
