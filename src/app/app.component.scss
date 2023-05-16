@@ -1,0 +1,85 @@
+.page {
+  font-family: 'Fira Mono', monospace;
+  font-size: 20px;
+  margin: 20px;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 40px); // view height - margin of page
+
+  .response-container {
+    color: white;
+    overflow-y: scroll;
+    text-overflow: ellipsis;
+    //border: 1px solid red; // for debugging
+    height: 100%;
+
+    .message {
+      margin-bottom: 1em;
+
+      .role {
+
+        .player {
+          color: forestgreen;
+        }
+        .system {
+          color: lightblue;
+        }
+        .assistant {
+          color: darkorange;
+        }
+
+      }
+
+      .content {
+        white-space: pre-line;
+      }
+    }
+  }
+
+  .form-container {
+    color: white;
+    background-color: #222020;
+    //border: 1px solid green; // for debugging
+    width: 100%;
+
+    .form {
+      display: flex;
+
+      .prefix {
+        flex: 0;
+        padding: 1px 2px;
+        //border: 1px dashed yellow; // for debugging
+
+        .user {
+          color: forestgreen;
+        }
+
+        .location {
+          color: dodgerblue;
+        }
+      }
+
+      input {
+        border: none;
+        //border: 1px dashed blue; // for debugging
+        background-color: transparent;
+        font-family: "Fira Mono", "monospace";
+        font-size: 20px;
+        color: white;
+        flex: 1;
+        overflow: auto;
+      }
+
+      input:focus {
+        outline: none;
+      }
+    }
+  }
+}
+
+
+
+
+
+
+

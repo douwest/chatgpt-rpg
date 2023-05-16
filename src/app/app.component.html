@@ -1,18 +1,23 @@
-<div class="page d-flex flex-column-reverse">
-  <div class="response-container">
-    <div *ngFor="let message of (conversation$ | async)" class="message">
-      <div *ngIf="message.role !== Role.System">
-        <span class="user">{{ getName(message.role) }}: </span>
+<div class="page">
+  <div #chat class="response-container">
+    <div *ngFor="let message of (conversation$ | async)">
+      <div *ngIf="message.role !== Role.System" class="message">
+        <span [ngSwitch]="message.role" class="role">
+          <span *ngSwitchCase="Role.Assistant" class="assistant" >{{ getName(message.role) }}</span>
+          <span *ngSwitchCase="Role.User" class="player" >{{ getName(message.role) }}</span>:
+        </span>
         <span class="content" [innerHTML]="message.content"></span>
       </div>
     </div>
   </div>
-  <footer class="instruction-container">
+  <div class="form-container">
     <form class="form" [formGroup]="form" (ngSubmit)="onSubmit()" >
-      <span class="user">{{ user }}</span><span>:</span>
-      <span class="location">{{ '/' + location}}</span><span>$</span>
-      <input class="instruction-form" type="text" formControlName="message">
+      <span class="prefix">
+        <span class="user">{{ user }}</span><span>:</span>
+        <span class="location">{{ '/' + location}}</span><span>$</span>
+      </span>
+      <input #instruction type="text" formControlName="message">
     </form>
-  </footer>
+  </div>
 </div>
 

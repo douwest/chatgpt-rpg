@@ -1,7 +1,7 @@
-import {Component} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, ViewChild} from '@angular/core';
 import {StorytellerService} from "./storyteller/storyteller.service";
 import {FormControl, UntypedFormGroup, Validators} from "@angular/forms";
-import {Observable, tap} from "rxjs";
+import {delay, last, Observable, tap} from "rxjs";
 import {Message} from "./domain/message.model";
 import {ChatCompletionRequestMessageRoleEnum} from "openai";
 import {GAME_CONFIG} from "./config/game.config";
@@ -9,9 +9,11 @@ import {GAME_CONFIG} from "./config/game.config";
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
+export class AppComponent implements AfterViewInit {
+  @ViewChild('instruction') instruction!: ElementRef;
+  @ViewChild('chat') chat!: ElementRef;
 
   public readonly user: string = 'user@user22';
   public readonly location: string = 'location';
@@ -25,15 +27,15 @@ export class AppComponent {
   public readonly Role = ChatCompletionRequestMessageRoleEnum;
 
   constructor(private storytellerService: StorytellerService) {
-    this.pending$.pipe(
-      tap(pending => {
-        if (pending) {
-          this.form.get('message')?.disable()
-        } else {
-          this.form.get('message')?.enable()
-        }
-      })
+    this.conversation$.pipe(
+      delay(150), // so that it can be rendered first before manipulating DOM elements.
+      tap(this.focus.bind(this)),
+      tap(this.scrollToBottom.bind(this))
     ).subscribe();
+  }
+
+  ngAfterViewInit(): void {
+    this.focus();
   }
 
   public onSubmit() {
@@ -45,7 +47,17 @@ export class AppComponent {
   }
 
   public getName(role: ChatCompletionRequestMessageRoleEnum): string | undefined {
-    if (!GAME_CONFIG.roles.has(role)) { throw new Error(`Could not find name for role ${role}!`) };
+    if (!GAME_CONFIG.roles.has(role)) {
+      throw new Error(`Could not find name for role ${role}!`)
+    }
     return GAME_CONFIG.roles.get(role);
+  }
+
+  private focus(): void {
+    this.instruction?.nativeElement?.focus();
+  }
+
+  scrollToBottom(): void {
+    this.chat.nativeElement.scrollTop = this.chat.nativeElement.scrollHeight;
   }
 }

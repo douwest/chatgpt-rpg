@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {ChatCompletionRequestMessageRoleEnum, OpenAIApi} from 'openai';
 import {environment} from "../../environments/environment";
 import {BehaviorSubject, Observable, Subject} from "rxjs";
-import {ConversationRole, Message} from "../domain/message.model";
+import {Message} from "../domain/message.model";
 import {GAME_CONFIG} from "../config/game.config";
 
 @Injectable({
@@ -26,7 +26,7 @@ export class StorytellerService {
    * @param model - the completion model to use
    * @param temperature - the temperature or 'randomness'
    */
-  public generateCompletion(messages: Message[], model = 'gpt-3.5-turbo', temperature = 0.75): any {
+  public generateCompletion(messages: Message[], model = 'gpt-3.5-turbo', temperature = 0.6): any {
     this.pending$$.next(true);
     this.openAIApi.createChatCompletion({model, messages, temperature,})
       .then(this.processResponse.bind(this))
@@ -40,6 +40,7 @@ export class StorytellerService {
    */
   public respond(content: string): void {
     this.conversation.push(new Message(content, ChatCompletionRequestMessageRoleEnum.User));
+    this.conversation$$.next(this.conversation);
     this.generateCompletion(this.conversation);
   }
 
