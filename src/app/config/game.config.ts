@@ -16,7 +16,7 @@ export const TEXT_BASED_RPG_CONFIG_1: GameConfig = {
  Welcome to Dungeon Master I \n
 *****************************\n
 `,
-  description: 'Accompany me, your Dungeon Master, on an epic adventure in a ChatGPT-generated text-based RPG. Mind you that we are still in alpha mode.',
+  description: 'Accompany me, your Dungeon Master, on an epic adventure in a ChatGPT-generated text-based RPG. You can type your questions or instructions in the prompt below and confirm with enter.',
   initialPrompt: new Message(
 `
 Please generate a text-based RPG, where you are the Dungeon Master.

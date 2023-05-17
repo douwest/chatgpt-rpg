@@ -1,11 +1,12 @@
 import {AfterViewInit, Component, ElementRef, ViewChild} from '@angular/core';
 import {StorytellerService} from "./storyteller/storyteller.service";
 import {FormControl, UntypedFormGroup, Validators} from "@angular/forms";
-import {delay, map, Observable, of, tap, timer} from "rxjs";
+import {delay, Observable, tap} from "rxjs";
 import {Message} from "./domain/message.model";
 import {ChatCompletionRequestMessageRoleEnum} from "openai";
 import {environment} from "../environments/environment";
-import { await$ } from './config/waiting-indicator.config';
+import {await$} from './config/waiting-indicator.config';
+import {genericErrorMessages} from "./config/error.messages.config";
 
 @Component({
   selector: 'app-root',
@@ -31,7 +32,7 @@ export class AppComponent implements AfterViewInit {
 
   constructor(private storytellerService: StorytellerService) {
     this.conversation$ = this.storytellerService.conversation$;
-    this.pending$ =  this.storytellerService.pending$;
+    this.pending$ = this.storytellerService.pending$;
     this.conversation$.pipe(
       delay(50), // so that it can be rendered first before manipulating DOM-elements.
       tap(this.focus.bind(this)),
@@ -44,14 +45,17 @@ export class AppComponent implements AfterViewInit {
   }
 
   public onSubmit() {
+
     const message = this.form.get('message');
-    if (message?.valid && this.storytellerService.ready) { // TODO add lastTalker or something to check how to handle response (sys vs. assistant)
-      this.storytellerService.respond(message.value);
-      message.setValue('');
-    } else if (message?.valid) {
+    const pending = this.storytellerService.pending$$.getValue();
+    if (message?.valid && this.storytellerService.queryForApiKey && !pending) {   // Queried for api key.
       this.storytellerService.initOpenAIApi(message.value);
-      message.setValue('')
+    } else if (message?.valid && !pending) {   // Query the OpenAI API.
+      this.storytellerService.respond(message.value);
+    } else if (pending) {
+      this.storytellerService.addSystemMessage(genericErrorMessages.pending)
     }
+    message?.setValue('');
   }
 
   public getName(role: ChatCompletionRequestMessageRoleEnum): string | undefined {

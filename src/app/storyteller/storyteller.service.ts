@@ -3,6 +3,8 @@ import {ChatCompletionRequestMessageRoleEnum, Configuration, OpenAIApi} from 'op
 import {environment} from "../../environments/environment";
 import {BehaviorSubject, Observable} from "rxjs";
 import {Message} from "../domain/message.model";
+import {HttpStatusCode} from "@angular/common/http";
+import {parseError} from "../config/error.messages.config";
 
 @Injectable({
   providedIn: 'root'
@@ -12,27 +14,27 @@ export class StorytellerService {
   private openAIApi: OpenAIApi | undefined;
   private openAIPrompt: Message[] = [];
   private userPrompt: Message[] = [new Message(
-      `${environment.gameConfiguration.title}\n\n${environment.gameConfiguration.description}`,
-      ChatCompletionRequestMessageRoleEnum.System
+    `${environment.gameConfiguration.title}\n\n${environment.gameConfiguration.description}`,
+    ChatCompletionRequestMessageRoleEnum.System
   ), new Message(
     `Please enter your API-Key and confirm with enter:`,
     ChatCompletionRequestMessageRoleEnum.System
   )];
 
-  ready = false;
+  queryForApiKey = true;
 
-  private readonly conversation$$: BehaviorSubject<Message[]> = new BehaviorSubject<Message[]>(this.userPrompt);
-  private readonly pending$$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  readonly conversation$$: BehaviorSubject<Message[]> = new BehaviorSubject<Message[]>(this.userPrompt);
+  readonly pending$$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   constructor() {
   }
 
   public initOpenAIApi(apiKey: string) {
-      this.openAIApi = new OpenAIApi(new Configuration({ apiKey }));
-      this.ready = true;
-      this.userPrompt.push(new Message('Thank you, your story will begin shortly.', ChatCompletionRequestMessageRoleEnum.System));
-      this.conversation$$.next(this.userPrompt);
-      this.newStory();
+    this.queryForApiKey = false;
+    this.openAIApi = new OpenAIApi(new Configuration({apiKey}));
+    this.userPrompt.push(new Message('Thank you, I will attempt to start a new adventure.', ChatCompletionRequestMessageRoleEnum.System));
+    this.conversation$$.next(this.userPrompt);
+    this.newStory();
   }
 
   /**
@@ -72,6 +74,15 @@ export class StorytellerService {
   }
 
   /**
+   * Add a system message. These messages are ignored by the OpenAI prompt.
+   * @param message the string content of the message you wish to show the user.
+   */
+  public addSystemMessage(message: string) {
+    this.userPrompt.push(new Message(message, ChatCompletionRequestMessageRoleEnum.System));
+    this.conversation$$.next(this.userPrompt);
+  }
+
+  /**
    * Processes the response from the OpenAIApi and appends them in sorted order to the messages array.
    * @param response - the OpenAIApi response
    */
@@ -88,19 +99,17 @@ export class StorytellerService {
   }
 
   private handleError(error: any): any {
-    this.userPrompt.push(new Message(
-        `HTTP Error: ${error.message}.
-        \n\nYou could try and continue the story by re-entering your command after some time has passed.`,
-        ChatCompletionRequestMessageRoleEnum.System
-    ));
-    this.conversation$$.next(this.userPrompt);
+    this.queryForApiKey = error.response.status === HttpStatusCode.Unauthorized;
+    this.addSystemMessage(parseError(error))
     return null;
   }
 
   get conversation$(): Observable<Message[]> {
     return this.conversation$$.asObservable();
   }
+
   get pending$(): Observable<boolean> {
     return this.pending$$.asObservable();
   }
+
 }
