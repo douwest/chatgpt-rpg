@@ -1,27 +1,38 @@
 import {Injectable} from '@angular/core';
-import {ChatCompletionRequestMessageRoleEnum, OpenAIApi} from 'openai';
+import {ChatCompletionRequestMessageRoleEnum, Configuration, OpenAIApi} from 'openai';
 import {environment} from "../../environments/environment";
-import {BehaviorSubject, debounce, delay, interval, Observable, of, Subject, tap} from "rxjs";
+import {BehaviorSubject, Observable} from "rxjs";
 import {Message} from "../domain/message.model";
-import {HttpErrorResponse} from "@angular/common/http";
 
 @Injectable({
   providedIn: 'root'
 })
 export class StorytellerService {
 
-  private readonly openAIApi: OpenAIApi = new OpenAIApi(environment.apiConfiguration)
+  private openAIApi: OpenAIApi | undefined;
   private openAIPrompt: Message[] = [];
   private userPrompt: Message[] = [new Message(
-      `A new game has started.\n\n\ ${environment.gameConfiguration.title}: ${environment.gameConfiguration.description}`,
+      `${environment.gameConfiguration.title}\n\n${environment.gameConfiguration.description}`,
       ChatCompletionRequestMessageRoleEnum.System
+  ), new Message(
+    `Please enter your API-Key and confirm with enter:`,
+    ChatCompletionRequestMessageRoleEnum.System
   )];
+
+  ready = false;
 
   private readonly conversation$$: BehaviorSubject<Message[]> = new BehaviorSubject<Message[]>(this.userPrompt);
   private readonly pending$$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   constructor() {
-    this.newStory();
+  }
+
+  public initOpenAIApi(apiKey: string) {
+      this.openAIApi = new OpenAIApi(new Configuration({ apiKey }));
+      this.ready = true;
+      this.userPrompt.push(new Message('Thank you, your story will begin shortly.', ChatCompletionRequestMessageRoleEnum.System));
+      this.conversation$$.next(this.userPrompt);
+      this.newStory();
   }
 
   /**
@@ -40,7 +51,7 @@ export class StorytellerService {
    */
   public generateCompletion(messages: Message[], model = 'gpt-3.5-turbo', temperature = 0.6): any {
     this.pending$$.next(true);
-    this.openAIApi.createChatCompletion({model, messages, temperature,})
+    this.openAIApi?.createChatCompletion({model, messages, temperature,})
       .then(this.processResponse.bind(this))
       .catch(this.handleError.bind(this))
       .finally(() => this.pending$$.next(false));

@@ -11,8 +11,12 @@ export type GameConfig = {
 };
 
 export const TEXT_BASED_RPG_CONFIG_1: GameConfig = {
-  title: 'Text-based RPG Instruction I',
-  description: 'Go on an epic adventure in a ChatGPT-generated text-based RPG.',
+  title: `
+*****************************\n
+ Welcome to Dungeon Master I \n
+*****************************\n
+`,
+  description: 'Accompany me, your Dungeon Master, on an epic adventure in a ChatGPT-generated text-based RPG. Mind you that we are still in alpha mode.',
   initialPrompt: new Message(
 `
 Please generate a text-based RPG, where you are the Dungeon Master.
@@ -32,6 +36,6 @@ As you are taking on the role of Dungeon Master, the game you narrate has to mee
   roles: new Map<ChatCompletionRequestMessageRoleEnum, string>([
     [ChatCompletionRequestMessageRoleEnum.User, 'Player'],
     [ChatCompletionRequestMessageRoleEnum.System, 'System'],
-    [ChatCompletionRequestMessageRoleEnum.Assistant, 'Dungeon master'],
+    [ChatCompletionRequestMessageRoleEnum.Assistant, 'Dungeon Master'],
   ])
 }
