@@ -1,6 +1,4 @@
 .page {
-  font-family: 'Fira Mono', monospace;
-  font-size: 20px;
   margin: 20px;
   display: flex;
   flex-direction: column;
@@ -72,7 +70,6 @@
         //border: 1px dashed blue; // for debugging
         background-color: transparent;
         font-family: "Fira Mono", "monospace";
-        font-size: 20px;
         color: white;
         flex: 1;
         overflow: auto;

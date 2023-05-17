@@ -1,8 +1,45 @@
 @import url('https://fonts.googleapis.com/css2?family=Fira+Mono&display=swap');
 
+@media (min-width:320px)  {
+  body {
+    font-size: 14px;
+  }
+  input {
+    font-size: 14px;
+  }
+}
+@media (min-width:600px)  {
+  body {
+    font-size: 16px;
+  }
+  input {
+    font-size: 16px;
+  }
+}
+@media (min-width:961px)  {
+  body {
+    font-size: 18px;
+  }
+  input {
+    font-size: 18px;
+  }
+}
+@media (min-width:1281px)  {
+  body {
+    font-size: 22px;
+  }
+  input {
+    font-size: 22px;
+  }
+}
+
 body {
   font-family: 'Fira Mono', monospace;
   background-color: #222020;
+}
+
+input  {
+  font-family: 'Fira Mono', monospace;
 }
 
 div::-webkit-scrollbar {
