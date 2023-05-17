@@ -66,7 +66,7 @@ export class AppComponent implements AfterViewInit {
     this.instruction.nativeElement.focus();
   }
 
-  private scrollToBottom(): void {
+  scrollToBottom(): void {
     this.chat.nativeElement.scrollTop = this.chat.nativeElement.scrollHeight;
   }
 }

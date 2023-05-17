@@ -7,13 +7,12 @@
           <span *ngSwitchCase="Role.User" class="player" >[{{ user }}]</span>
           <span *ngSwitchCase="Role.System" class="system" >[{{ getName(message.role) }}]</span>:
         </span>
-        <span class="content" [innerHTML]="message.content"></span>
+        <message class="content" [content]="message.content" (newWordEvent)="scrollToBottom()"></message>
       </div>
     </div>
     <div *ngIf="(pending$ | async)" class="pending">
       <span class="assistant">[{{ getName(Role.Assistant) }}]</span>
       <span class="dotted-lines">: {{await$ | async}}</span>
-
     </div>
   </div>
   <div class="form-container">

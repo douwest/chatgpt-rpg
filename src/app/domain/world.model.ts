@@ -17,7 +17,16 @@ export enum Atmosphere {
 export enum Theme {
   PIRATE = 'pirate',
   MEDIEVAL = 'medieval',
-  GI_JOE = 'GI-JOE'
+  SPACE = 'space',
+  KNIGHTS = 'knights',
+  WESTERN = 'western',
+  ARCHER_VICE = 'archer-vice',
+  JUNGLE = 'jungle',
+  SECRET_AGENT = 'secret agent',
+  CASTLES = 'castles',
+  SAMURAI = 'samurai',
+  NINJA = 'ninja',
+  MODERN_WARFARE = 'modern warfare'
 }
 
 export enum ThemeDecorator {
@@ -47,7 +56,16 @@ export const Atmospheres = [
 export const Themes = [
   Theme.PIRATE,
   Theme.MEDIEVAL,
-  Theme.GI_JOE
+  Theme.KNIGHTS,
+  Theme.SPACE,
+  Theme.ARCHER_VICE,
+  Theme.WESTERN,
+  Theme.JUNGLE,
+  Theme.CASTLES,
+  Theme.SAMURAI,
+  Theme.NINJA,
+  Theme.SECRET_AGENT,
+  Theme.MODERN_WARFARE
 ];
 export const Decorators = [
   ThemeDecorator.FANTASY,
@@ -64,9 +82,10 @@ export class World {
   themeDecorator: ThemeDecorator;
 
   constructor() {
-    this.atmosphere = Atmospheres[+Math.random().toFixed(0) % Atmospheres.length];
-    this.theme = Themes[+Math.random().toFixed(0) % Themes.length];
-    this.themeDecorator = Decorators[+Math.random().toFixed(0) % Decorators.length];
+    this.atmosphere = Atmospheres[Math.floor(Math.random()*Atmospheres.length)];
+    this.theme = Themes[Math.floor(Math.random()*Themes.length)];
+    this.themeDecorator = Decorators[Math.floor(Math.random()*Decorators.length)];
+    console.log(JSON.stringify(this));
   }
 
   public toString(): string {
