@@ -2,3 +2,27 @@ span {
   color: white;
   white-space: pre-line;
 }
+
+.white {
+  color: white;
+}
+
+.gray {
+  color: slategray;
+}
+
+.green {
+  color: mediumspringgreen;
+}
+
+.blue {
+  color: cornflowerblue;
+}
+
+.purple {
+  color: mediumpurple;
+}
+
+.yellow {
+  color: goldenrod;
+}

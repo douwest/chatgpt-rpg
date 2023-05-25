@@ -17,7 +17,7 @@ export class StorytellerService {
     `${environment.gameConfiguration.title}\n\n${environment.gameConfiguration.description}`,
     ChatCompletionRequestMessageRoleEnum.System
   ), new Message(
-    `Please enter your API-Key and confirm with enter:`,
+    `Please enter your API-Key:`,
     ChatCompletionRequestMessageRoleEnum.System
   )];
 

@@ -20,7 +20,7 @@ export const TEXT_BASED_RPG_CONFIG_1: GameConfig = {
   initialPrompt: new Message(
 `
 Please generate a text-based RPG, where you are the Dungeon Master.
-The adventurer ${new Player('Johnson the Oblivious').toString()} will go on an adventure which you will guide him through.
+The adventurer with a name you can generate for us will go on an adventure which you will guide him through.
 As you are taking on the role of Dungeon Master, the game you narrate has to meet the following constraints:
 - The setting in which the story takes place should match: ${new World().toString()}.
 - Completions should be concise and contain at most three paragraphs.
@@ -30,6 +30,7 @@ As you are taking on the role of Dungeon Master, the game you narrate has to mee
 - Present the user with a choice or question at the end of every answer.
 - You can only ask ONE question per turn.
 - Never answer any question that could impact the narrative yourself.
+- JSON objects should be shown as VALID json meeting json specification and be parsed by JSON.parse() in javascript.
 `,
     ChatCompletionRequestMessageRoleEnum.System
   ),
