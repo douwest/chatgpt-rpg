@@ -22,7 +22,7 @@ export class MessageComponent implements AfterViewInit {
      })
      let words: WordModel[] = this.content.split(' ')
        .map(str => new WordModel(WordType.UTTERANCE, str));
-     words = objects.concat(words);
+     words = words.concat(objects);
      const typingInterval = 10 + (+Math.random().toFixed(0) % 40); // 100 - 140 = 100
     this.words$ = interval(typingInterval)
       .pipe(take(words.length), map(i => {
