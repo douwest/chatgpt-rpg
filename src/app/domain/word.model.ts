@@ -1,5 +1,4 @@
 import {GameObject} from "./game-object.model";
-import {error} from "@angular/compiler-cli/src/transformers/util";
 
 export enum WordType {
   GAME_OBJECT,
@@ -34,7 +33,7 @@ export class WordModel {
     switch (type) {
       case WordType.UTTERANCE:
         this.color = WordColor.WHITE;
-        return content + ' ';
+        return content + '\u2002';
       case WordType.GAME_OBJECT:
         return this.processGameObject(content);
     }
@@ -48,7 +47,7 @@ export class WordModel {
       return `\n\n[${gameObject.name ? gameObject.name : 'Game Object'}]\n\t${gameObject.getDescription()}`;
     } catch (err) {
       console.warn(err);
-      return content + ' ';
+      return content + '\u2002';
     }
 
   }

@@ -31,6 +31,7 @@ As you are taking on the role of Dungeon Master, the game you narrate has to mee
 - You can only ask ONE question per turn.
 - Never answer any question that could impact the narrative yourself.
 - JSON objects should be shown as VALID json meeting json specification and be parsed by JSON.parse() in javascript.
+- You should try to generate an ASCII art image at the start of a response, of maximum 24 characters wide, started by a newline character, '\n', fitting the scene.
 `,
     ChatCompletionRequestMessageRoleEnum.System
   ),
