@@ -26,7 +26,7 @@ export class GameObject {
       case 'enemy':
         return WordColor.RED;
       case 'location':
-        return WordColor.BROWN;
+        return WordColor.GRAY;
       case 'item':
       case 'world_object':
         return this.getColorByRarity();

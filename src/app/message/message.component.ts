@@ -2,6 +2,8 @@ import {AfterViewInit, Component, EventEmitter, Input, Output} from '@angular/co
 import {BehaviorSubject, interval, map, Observable, take} from "rxjs";
 import {WordColor, WordModel, WordType} from "../domain/word.model";
 
+export const jsonRegex = new RegExp(/{(.*?)}/g);
+
 @Component({
   selector: 'message',
   templateUrl: './message.component.html',
@@ -19,7 +21,7 @@ export class MessageComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-     const objects: WordModel[] = Array.from(this.content.matchAll(new RegExp(/{(.*?)}/g)))
+    const objects: WordModel[] = Array.from(this.content.matchAll(jsonRegex))
        .map(obj => new WordModel(WordType.GAME_OBJECT, obj[0]));
      objects.forEach(object => {
        this.content = this.content.replace(object.content, '');
