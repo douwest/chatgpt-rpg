@@ -13,6 +13,10 @@ export class MessageComponent implements AfterViewInit {
   words$: Observable<WordModel[]> | null = null;
   currentWords: WordModel[] = [];
   ready$$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  private readonly interval = {
+    min: 25,
+    max: 40
+  }
 
   ngAfterViewInit() {
      const objects: WordModel[] = Array.from(this.content.matchAll(new RegExp(/{(.*?)}/g)))
@@ -23,7 +27,7 @@ export class MessageComponent implements AfterViewInit {
      let words: WordModel[] = this.content.split(' ')
        .map(str => new WordModel(WordType.UTTERANCE, str));
      words = words.concat(objects);
-     const typingInterval = 10 + (+Math.random().toFixed(0) % 40); // 100 - 140 = 100
+    const typingInterval = this.interval.min + (+Math.random().toFixed(0) % this.interval.max); // 100 - 140 = 100
     this.words$ = interval(typingInterval)
       .pipe(take(words.length), map(i => {
         const newWord = words[i];

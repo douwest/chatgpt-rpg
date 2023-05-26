@@ -8,11 +8,14 @@ export enum WordType {
 export enum WordColor {
   WHITE,
   GRAY,
+  BROWN,
   GREEN,
   BLUE,
   PURPLE,
   ORANGE,
-  YELLOW
+  YELLOW,
+  LIME,
+  RED
 }
 
 export class WordModel {
